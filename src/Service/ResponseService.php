@@ -57,7 +57,7 @@ class ResponseService
             }
         }
 
-        return $nackResponseDom->saveXML();
+        return $nackResponseDom;
     }
 
     public function fillData(array $responseStructure, array $data, DOMDocument $responseDom)
@@ -94,15 +94,15 @@ class ResponseService
             'reference' => $requestDom->getElementsByTagName('reference')->item(0)->nodeValue,
         ];
 
-        if (strlen($requestDom->getElementsByTagName('reference')->item(0)->nodeValue) <= $responseStructure['reference']['maxLength']) {
-            $data['echo'] = $requestDom->getElementsByTagName('echo')->item(0)->nodeValue;
+        if (strlen($requestDom->getElementsByTagName('reference')->item(0)->nodeValue) > $responseStructure['reference']['maxLength']) {
+            $data['message'] = 'Max value exceeded for reference.';
+            $data['code'] = '400';
+            unset($responseStructure['echo']);
+        } else {
+            $data['echo'] = !is_null($requestDom->getElementsByTagName('echo')->item(0)) ? $requestDom->getElementsByTagName('echo')->item(0)->nodeValue : '';
             unset($responseStructure['error']);
             unset($responseStructure['message']);
             unset($responseStructure['code']);
-        } else {
-            $data['message'] = 'Max value exceeded';
-            $data['code'] = '400';
-            unset($responseStructure['echo']);
         }
 
         $pingResponseDom = new DOMDocument('1.0', 'utf-8');
@@ -110,7 +110,7 @@ class ResponseService
 
         $pingResponseDom = $this->fillData($responseStructure, $data, $pingResponseDom);
 
-        return $pingResponseDom->saveXML();
+        return $pingResponseDom;
     }
 
     public function reverse_response(array $responseStructure, DOMDocument $requestDom)
@@ -139,6 +139,6 @@ class ResponseService
 
         $pingResponseDom = $this->fillData($responseStructure, $data, $pingResponseDom);
 
-        return $pingResponseDom->saveXML();
+        return $pingResponseDom;
     }
 }

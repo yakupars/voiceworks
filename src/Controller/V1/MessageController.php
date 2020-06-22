@@ -7,6 +7,7 @@ use App\Exception\ParseException;
 use App\Service\MessageProcessService;
 use App\Service\ResponseService;
 use App\Service\XsdToXmlConverterService;
+use DOMDocument;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,10 +45,10 @@ class MessageController extends AbstractController
         } catch (Exception $e) {
             $xsdString = $messageProcessService->getXsdByType('nack');
             $responseStructure = $xsdToXmlConverterService->populateByXsd($xsdString);
-            $nackResponseContent = $requestProcessService->nack($responseStructure, $e->getMessage());
+            $nackResponseDom = $requestProcessService->nack($responseStructure, $e->getMessage());
 
             $response->setStatusCode($e->getCode());
-            $response->setContent($nackResponseContent);
+            $response->setContent($nackResponseDom->saveXml());
 
             return $response;
         }
@@ -58,10 +59,10 @@ class MessageController extends AbstractController
         } catch (Exception $e) {
             $xsdString = $messageProcessService->getXsdByType('nack');
             $responseStructure = $xsdToXmlConverterService->populateByXsd($xsdString);
-            $nackResponseContent = $requestProcessService->nack($responseStructure, $e->getMessage());
+            $nackResponseDom = $requestProcessService->nack($responseStructure, $e->getMessage());
 
             $response->setStatusCode($e->getCode());
-            $response->setContent($nackResponseContent);
+            $response->setContent($nackResponseDom->saveXml());
 
             return $response;
         }
@@ -71,33 +72,38 @@ class MessageController extends AbstractController
         $responseStructure = $xsdToXmlConverterService->populateByXsd($xsdString);
 
         try {
-            $responseContent = $requestProcessService->{$responseType}($responseStructure, $requestDomDocument);
+            /** @var DOMDocument $responseDom */
+            $responseDom = $requestProcessService->{$responseType}($responseStructure, $requestDomDocument);
         } catch (Throwable $e) {
             $xsdString = $messageProcessService->getXsdByType('nack');
             $responseStructure = $xsdToXmlConverterService->populateByXsd($xsdString);
-            $responseContent = $requestProcessService->nack($responseStructure, $e->getMessage());
+            $responseDom = $requestProcessService->nack($responseStructure, $e->getMessage());
 
             $response->setStatusCode($e->getCode());
-            $response->setContent($responseContent);
+            $response->setContent($responseDom->saveXml());
 
             return $response;
         }
 
         try {
-            $messageProcessService->load($responseContent);
-            $messageProcessService->validateWithSchema($responseContent);
+            $messageProcessService->load($responseDom->saveXML());
+            $messageProcessService->validateWithSchema($responseDom->saveXML());
         } catch (Exception $e) {
             $xsdString = $messageProcessService->getXsdByType('nack');
             $responseStructure = $xsdToXmlConverterService->populateByXsd($xsdString);
-            $nackResponseContent = $requestProcessService->nack($responseStructure, $e->getMessage());
+            $nackResponseDom = $requestProcessService->nack($responseStructure, $e->getMessage());
 
             $response->setStatusCode($e->getCode());
-            $response->setContent($nackResponseContent);
+            $response->setContent($nackResponseDom->saveXml());
 
             return $response;
         }
 
-        $response->setContent($responseContent);
+        if ($responseDom->firstChild->lastChild->lastChild->nodeName == 'error') {
+            $response->setStatusCode($responseDom->firstChild->lastChild->lastChild->firstChild->nodeValue);
+        }
+
+        $response->setContent($responseDom->saveXml());
 
         return $response;
     }

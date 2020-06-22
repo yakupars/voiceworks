@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Exception\ElementNotFoundException;
 use App\Exception\FileNotFoundException;
 use App\Exception\ParseException;
+use App\Exception\SchemeValidationException;
 use DOMDocument;
 use Exception;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -120,6 +121,7 @@ class MessageProcessService
      *
      * @throws ElementNotFoundException
      * @throws FileNotFoundException
+     * @throws SchemeValidationException
      */
     public function validateWithSchema(string $xml)
     {
@@ -130,7 +132,7 @@ class MessageProcessService
         } catch (Exception $e) {
             $newMessage = strstr($e->getMessage(), 'Element');
 
-            throw new ElementNotFoundException($newMessage);
+            throw new SchemeValidationException($newMessage);
         }
     }
 }
