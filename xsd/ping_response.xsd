@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="ping_response" type="PingResponseType"/>
+  <xs:complexType name="PingResponseType">
+    <xs:sequence>
+      <xs:element name="header" type="HeaderType"/>
+      <xs:element name="body" type="PingResponseTypeBodyType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="HeaderType">
+    <xs:sequence>
+      <xs:element name="type" type="xs:string"/>
+      <xs:element name="sender" type="xs:string"/>
+      <xs:element name="recipient" type="xs:string"/>
+      <xs:element name="reference" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="48"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="timestamp" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PingResponseTypeBodyType">
+    <xs:sequence>
+      <xs:element name="echo" type="xs:string" minOccurs="0"/>
+      <xs:element name="error" type="ErrorType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ErrorType">
+    <xs:sequence>
+      <xs:element name="code">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="\d{3}"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
