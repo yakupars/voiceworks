@@ -20,8 +20,6 @@ class MessageProcessService
     private SerializerInterface $serializer;
     private ParameterBagInterface $parameterBag;
 
-    public DOMDocument $xmlMessage;
-
     public function __construct(
         XmlSerializer $serializer,
         ParameterBagInterface $parameterBag
@@ -43,7 +41,7 @@ class MessageProcessService
      *
      * @throws ParseException
      */
-    public function load(string $xml)
+    public function parse(string $xml)
     {
         $xmlMessage = new DOMDocument();
         $xmlMessage->preserveWhiteSpace = false;
@@ -54,7 +52,7 @@ class MessageProcessService
             throw new ParseException('Can not parse the requested xml. ' . $exception->getMessage());
         }
 
-        return $this->xmlMessage = $xmlMessage;
+        return $xmlMessage;
     }
 
     /**
@@ -89,7 +87,7 @@ class MessageProcessService
     public function getXsdByType(string $type)
     {
         $xsdDir = $this->parameterBag->get('xsd.dir');
-        $finder = new Finder();
+        $finder = Finder::create();
         $finder->files()->in($xsdDir)->name($type . '.xsd');
 
         if (!$finder->hasResults()) {
@@ -123,12 +121,12 @@ class MessageProcessService
      * @throws FileNotFoundException
      * @throws SchemeValidationException
      */
-    public function validateWithSchema(string $xml)
+    public function validateWithSchema(string $xml): void
     {
         $xsdContent = $this->getXsdByXml($xml);
 
         try {
-            $this->xmlMessage->schemaValidateSource($xsdContent);
+            $this->parse($xml)->schemaValidateSource($xsdContent);
         } catch (Exception $e) {
             $newMessage = strstr($e->getMessage(), 'Element');
 

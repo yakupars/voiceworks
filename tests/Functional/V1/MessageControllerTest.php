@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Tests;
+namespace App\Tests\Functional\V1;
 
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -13,7 +13,7 @@ class MessageControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/message',
+            '/v1/message',
             [], [], [],
             '<?xml version="1.0" encoding="utf-8"?>
 <ping_requestxxx>
@@ -39,7 +39,7 @@ class MessageControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/message',
+            '/v1/message',
             [], [], [],
             '<?xml version="1.0" encoding="utf-8"?>
 <ping_request>
@@ -63,7 +63,7 @@ class MessageControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/message',
+            '/v1/message',
             [], [], [],
             '<?xml version="1.0" encoding="utf-8"?>
 <ping_request>
@@ -90,7 +90,7 @@ class MessageControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/message',
+            '/v1/message',
             [], [], [],
             '<?xml version="1.0" encoding="utf-8"?>
 <ping_request>
@@ -114,7 +114,7 @@ class MessageControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/message',
+            '/v1/message',
             [], [], [],
             '<?xml version="1.0" encoding="utf-8"?>
 <reverse_request>
@@ -139,7 +139,7 @@ class MessageControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/message',
+            '/v1/message',
             [], [], [],
             '<?xml version="1.0" encoding="utf-8"?>
 <reverse_requestxxx>
@@ -165,7 +165,7 @@ class MessageControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/message',
+            '/v1/message',
             [], [], [],
             '<?xml version="1.0" encoding="utf-8"?>
 <reverse_request>
@@ -191,7 +191,7 @@ class MessageControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $client->request(
             'POST',
-            '/message',
+            '/v1/message',
             [], [], [],
             '<?xml version="1.0" encoding="utf-8"?>
 <reverse_request>

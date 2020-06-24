@@ -1,6 +1,12 @@
-controllers:
-    resource: ../../src/Controller/
+controllers_v1:
+    resource: ../../src/Controller/V1
     type: annotation
+    prefix: /v1
+
+controllers_v2:
+    resource: ../../src/Controller/V2
+    type: annotation
+    prefix: /v2
 
 kernel:
     resource: ../../src/Kernel.php

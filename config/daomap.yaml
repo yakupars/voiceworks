@@ -1,0 +1,14 @@
+parameters:
+    nack: App\Dao\NackResponse
+    ping_request:
+        processor: App\RequestProcess\PingRequestProcessor
+        class: App\Dao\PingRequest
+        response:
+            type: ping_response
+            class: App\Dao\PingResponse
+    reverse_request:
+        processor: App\RequestProcess\ReverseRequestProcessor
+        class: App\Dao\ReverseRequest
+        response:
+            type: reverse_response
+            class: App\Dao\ReverseResponse
